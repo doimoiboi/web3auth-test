@@ -95,6 +95,7 @@ export default class EthereumRpc {
       );
 
       return signedMessage;
+      
     } catch (error) {
       return error as string;
     }

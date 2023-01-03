@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-// HIGHLIGHTSTART-importModules
 import { Web3Auth } from "@web3auth/modal";
 import { WALLET_ADAPTERS, CHAIN_NAMESPACES, SafeEventEmitterProvider } from "@web3auth/base";
 import RPC from "./web3RPC";
 import "./App.css";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
-// get from https://dashboard.web3auth.io
+//from https://dashboard.web3auth.io
 const clientId = "BCxzKbjFiYzK7weDw6Wsxa1C5CS7W8OhsylVxyC9RI7Iw_zFR4gGpe36cG4c44cDBa0BVLnjABLhU_BSIadNF3c"; 
 
 function App() {
@@ -22,7 +21,7 @@ function App() {
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
             chainId: "0x5",
-            rpcTarget: "https://eth-goerli.g.alchemy.com/v2/eq_jLeOuH6iTZIL1u51ha6h2yODGGeAo", // This is the public RPC we have added, please pass on your own endpoint while creating an app
+            rpcTarget: "https://eth-goerli.g.alchemy.com/v2/eq_jLeOuH6iTZIL1u51ha6h2yODGGeAo"
           },
         });
 
@@ -58,15 +57,16 @@ function App() {
     setProvider(web3authProvider);
   };
 
-  const getUserInfo = async () => {
+  const getUserEmail = async () => {
     if (!web3auth) {
       console.log("web3auth not initialized yet");
       return;
     }
-    const user = await web3auth.getUserInfo();
+    const userInfo = await web3auth.getUserInfo();
+    const user = userInfo.email;
     console.log(user);
-    // content = document.getElementById("content");
-    // content!.innerHTML = user;
+    content = document.getElementById("content");
+    content!.innerHTML = user!;
   };
 
   const logout = async () => {
@@ -161,7 +161,7 @@ function App() {
     content = document.getElementById("content");
     content!.innerHTML = privateKey;
   };
-  
+
   const loggedInView = (
     <>
       <div id = "output">
@@ -169,8 +169,8 @@ function App() {
           welcome
         </p>
       </div>
-      <button onClick={getUserInfo} className="card">
-        Get User Info
+      <button onClick={getUserEmail} className="card">
+        Get User Email
       </button>
       <button onClick={getChainId} className="card">
         Get Chain ID
