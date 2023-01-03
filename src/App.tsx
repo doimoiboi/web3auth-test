@@ -53,8 +53,25 @@ function App() {
       console.log("web3auth not initialized yet");
       return;
     }
+
+    // Call web3auth modal login
     const web3authProvider = await web3auth.connect();
+    console.log(web3authProvider);
     setProvider(web3authProvider);
+
+    // Get login email and compare with signer email
+    const userEmail = await getUserEmail();
+
+    // Sign message with private key
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const rpc = new RPC(provider);
+    const signedMessage = await rpc.signMessage();
+
+    logout();
+    console.log("logged out!");
   };
 
   const getUserEmail = async () => {
@@ -67,6 +84,7 @@ function App() {
     console.log(user);
     content = document.getElementById("content");
     content!.innerHTML = user!;
+    return user;
   };
 
   const logout = async () => {
@@ -201,9 +219,16 @@ function App() {
   );
 
   const unloggedInView = (
+    <>
+    <div id = "output">
+        <p id = "content">
+          welcome
+        </p>
+    </div>
     <button onClick={login} className="card">
       Login
     </button>
+    </>
   );
 
   return (
@@ -215,7 +240,7 @@ function App() {
         & ReactJS Example
       </h1>
 
-      <div className="grid">{provider ? loggedInView : unloggedInView}</div>
+      <div className="grid">{unloggedInView}</div>
 
       <footer className="footer">
         <a href="https://github.com/Web3Auth/Web3Auth/tree/master/examples/react-app" target="_blank" rel="noopener noreferrer">
