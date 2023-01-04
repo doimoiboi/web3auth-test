@@ -32,14 +32,16 @@ function App() {
           },
         });
         web3auth.configureAdapter(openloginAdapter);
+        console.log("Adapter configured!")
 
         setWeb3auth(web3auth);
+        console.log("web3auth set!")
 
         await web3auth.initModal();
           if (web3auth.provider) {
             setProvider(web3auth.provider);
           };
-
+        console.log("modal configured!")  
       } catch (error) {
         console.error(error);
       }
@@ -56,18 +58,18 @@ function App() {
 
     // Call web3auth modal login
     const web3authProvider = await web3auth.connect();
-    console.log(web3authProvider);
     setProvider(web3authProvider);
 
     // Get login email and compare with signer email
     const userEmail = await getUserEmail();
 
     // Sign message with private key
+    setProvider(web3authProvider);
+    console.log(provider);
     if (!provider) {
       console.log("provider not initialized yet");
-      return;
     }
-    const rpc = new RPC(provider);
+    const rpc = new RPC(provider!);
     const signedMessage = await rpc.signMessage();
 
     logout();
