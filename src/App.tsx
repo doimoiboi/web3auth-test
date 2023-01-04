@@ -139,6 +139,7 @@ function App() {
       console.log("provider not initialized yet");
       return;
     }
+    console.log(provider);
     const rpc = new RPC(provider);
     const signedMessage = await rpc.signMessage();
 
