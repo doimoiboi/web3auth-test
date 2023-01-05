@@ -1,3 +1,6 @@
+/* 
+ * A file to encapsulate some basic interactions with the blockchain network given a provider.
+ */
 import type { SafeEventEmitterProvider } from "@web3auth/base";
 import Web3 from "web3";
 
