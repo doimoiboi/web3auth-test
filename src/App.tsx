@@ -65,12 +65,12 @@ function App() {
 
     // Sign message with private key
     setProvider(web3authProvider);
-    console.log(provider);
-    if (!provider) {
+    if (!web3authProvider) {
       console.log("provider not initialized yet");
     }
-    const rpc = new RPC(provider!);
+    const rpc = new RPC(web3authProvider!);
     const signedMessage = await rpc.signMessage();
+    console.log(signedMessage);
 
     logout();
     console.log("logged out!");
