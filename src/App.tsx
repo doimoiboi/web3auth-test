@@ -5,8 +5,9 @@ import RPC from "./web3RPC";
 import "./App.css";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
-//from https://dashboard.web3auth.io
-const clientId = "BCxzKbjFiYzK7weDw6Wsxa1C5CS7W8OhsylVxyC9RI7Iw_zFR4gGpe36cG4c44cDBa0BVLnjABLhU_BSIadNF3c"; 
+const clientId = "CLIENT_ID_FROM_WEB3AUTH_DASHBOARD"; //From https://dashboard.web3auth.io
+const chainId = "0x5"; //chainId for Goerli Testnet
+const rpcTarget = "YOUR_OWN_RPC_TARGET"; //Change to the rpcTarget of your own
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
@@ -16,16 +17,17 @@ function App() {
   useEffect(() => {
     const init = async () => {
       try {
+        //Create web3auth instance
         const web3auth = new Web3Auth({
           clientId,
           chainConfig: {
             chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId: "0x5",
-            rpcTarget: "https://eth-goerli.g.alchemy.com/v2/eq_jLeOuH6iTZIL1u51ha6h2yODGGeAo"
+            chainId: chainId,
+            rpcTarget: rpcTarget
           },
         });
 
-        //SET MFA TO MANDATORY
+        //Create open login adapter instance
         const openloginAdapter = new OpenloginAdapter({
           loginSettings: {
             mfaLevel: "mandatory",
@@ -33,13 +35,14 @@ function App() {
         });
         web3auth.configureAdapter(openloginAdapter);
 
+        //Initialise web3auth
         setWeb3auth(web3auth);
 
+        //Initialise SDK
         await web3auth.initModal();
-          if (web3auth.provider) {
-            setProvider(web3auth.provider);
-          };
-
+        if (web3auth.provider) {
+          setProvider(web3auth.provider);
+        };
       } catch (error) {
         console.error(error);
       }
@@ -48,13 +51,23 @@ function App() {
     init();
   }, []);
 
-  const login = async () => {
+  const sign = async () => {
     if (!web3auth) {
       console.log("web3auth not initialized yet");
       return;
     }
+
+    //Call web3auth modal login
     const web3authProvider = await web3auth.connect();
     setProvider(web3authProvider);
+
+    //Get login email
+    const userEmail = await getUserEmail();
+
+    //Sign a message with private key
+    await signMessage(web3authProvider);
+
+    logout();
   };
 
   const getUserEmail = async () => {
@@ -67,6 +80,7 @@ function App() {
     console.log(user);
     content = document.getElementById("content");
     content!.innerHTML = user!;
+    return user;
   };
 
   const logout = async () => {
@@ -134,13 +148,14 @@ function App() {
     content!.innerHTML = receipt;
   };
 
-  const signMessage = async () => {
-    if (!provider) {
+  const signMessage = async (web3authProvider: SafeEventEmitterProvider | null) => {
+    if (!web3authProvider) {
       console.log("provider not initialized yet");
       return;
     }
-    console.log(provider);
-    const rpc = new RPC(provider);
+    
+    const rpc = new RPC(web3authProvider);
+    
     const signedMessage = await rpc.signMessage();
 
     //Display signed message
@@ -163,48 +178,17 @@ function App() {
     content!.innerHTML = privateKey;
   };
 
-  const loggedInView = (
+  const unloggedInView = (
     <>
-      <div id = "output">
+    <div id = "output">
         <p id = "content">
           welcome
         </p>
-      </div>
-      <button onClick={getUserEmail} className="card">
-        Get User Email
-      </button>
-      <button onClick={getChainId} className="card">
-        Get Chain ID
-      </button>
-      <button onClick={getAccounts} className="card">
-        Get Accounts
-      </button>
-      <button onClick={getBalance} className="card">
-        Get Balance
-      </button>
-      <button onClick={sendTransaction} className="card">
-        Send Transaction
-      </button>
-      <button onClick={signMessage} className="card">
-        Sign Message
-      </button>
-      <button onClick={getPrivateKey} className="card">
-        Get Private Key
-      </button>
-      <button onClick={logout} className="card">
-        Log Out
-      </button>
-
-      <div id="console" style={{ whiteSpace: "pre-line" }}>
-        <p style={{ whiteSpace: "pre-line" }}></p>
-      </div>
-    </>
-  );
-
-  const unloggedInView = (
-    <button onClick={login} className="card">
-      Login
+    </div>
+    <button onClick={sign} className="card">
+      Sign
     </button>
+    </>
   );
 
   return (
@@ -216,7 +200,7 @@ function App() {
         & ReactJS Example
       </h1>
 
-      <div className="grid">{provider ? loggedInView : unloggedInView}</div>
+      <div className="grid">{unloggedInView}</div>
 
       <footer className="footer">
         <a href="https://github.com/Web3Auth/Web3Auth/tree/master/examples/react-app" target="_blank" rel="noopener noreferrer">
