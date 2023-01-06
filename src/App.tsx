@@ -5,10 +5,9 @@ import RPC from "./web3RPC";
 import "./App.css";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
-//From https://dashboard.web3auth.io
-const clientId = "BCxzKbjFiYzK7weDw6Wsxa1C5CS7W8OhsylVxyC9RI7Iw_zFR4gGpe36cG4c44cDBa0BVLnjABLhU_BSIadNF3c"; 
-const chainId = "0x5";
-const rpcTarget = "https://eth-goerli.g.alchemy.com/v2/eq_jLeOuH6iTZIL1u51ha6h2yODGGeAo";
+const clientId = "CLIENT_ID_FROM_WEB3AUTH_DASHBOARD"; //From https://dashboard.web3auth.io
+const chainId = "0x5"; //chainId for Goerli Testnet
+const rpcTarget = "YOUR_OWN_RPC_TARGET"; //Change to the rpcTarget of your own
 
 function App() {
   const [web3auth, setWeb3auth] = useState<Web3Auth | null>(null);
