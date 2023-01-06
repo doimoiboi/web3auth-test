@@ -153,7 +153,9 @@ function App() {
       console.log("provider not initialized yet");
       return;
     }
+    
     const rpc = new RPC(web3authProvider);
+    
     const signedMessage = await rpc.signMessage();
 
     //Display signed message
